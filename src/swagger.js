@@ -38,7 +38,7 @@ const options = {
                 },
                 User: {
                     type: 'object',
-                    required: ['name', 'email', 'password', 'phone', 'available', 'packets'],
+                    required: ['name', 'email', 'password', 'phone', 'available', 'packets', 'ratings'],
                     properties: {
                         name: {
                             type: 'string',
@@ -60,6 +60,36 @@ const options = {
                             items: {
                                 type: 'string',
                             },
+                        },
+                        ratings: {
+                            type: 'array',
+                            items: {
+                                type: 'string',
+                            },
+                            description: 'List of rating IDs associated with the user',
+                        },
+                    },
+                },
+                Rating: {
+                    type: 'object',
+                    required: ['user', 'score'],
+                    properties: {
+                        user: {
+                            type: 'string',
+                            description: 'The ID of the user being rated',
+                        },
+                        score: {
+                            type: 'number',
+                            description: 'The rating score (1-5)',
+                        },
+                        comment: {
+                            type: 'string',
+                            description: 'Optional comment about the user',
+                        },
+                        createdAt: {
+                            type: 'string',
+                            format: 'date-time',
+                            description: 'The date when the rating was created',
                         },
                     },
                 },

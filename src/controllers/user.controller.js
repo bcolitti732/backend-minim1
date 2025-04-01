@@ -18,6 +18,9 @@ exports.deleteUserById = deleteUserById;
 exports.deactivateUserById = deactivateUserById;
 exports.getUserPackets = getUserPackets;
 exports.addPacketToUser = addPacketToUser;
+exports.getUserRatings = getUserRatings;
+exports.addRatingToUser = addRatingToUser;
+exports.removeRatingFromUser = removeRatingFromUser;
 const user_service_1 = require("../services/user.service");
 const userService = new user_service_1.UserService();
 /**
@@ -46,6 +49,10 @@ function postUser(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const user = req.body;
+            // Verificar si se incluyen ratings en el cuerpo de la solicitud
+            if (!user.ratings) {
+                user.ratings = []; // Inicializar ratings como un array vacío si no se proporciona
+            }
             const newUser = yield userService.postUser(user);
             res.status(201).json(newUser);
         }
@@ -340,6 +347,161 @@ function addPacketToUser(req, res) {
         }
         catch (error) {
             res.status(500).json({ message: "Error adding packet to user", error });
+        }
+    });
+}
+/**
+ * @swagger
+ * /api/users/{id}/ratings:
+ *   get:
+ *     summary: Get all ratings of a user
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user ID
+ *     responses:
+ *       200:
+ *         description: List of ratings
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Rating'
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
+function getUserRatings(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const userId = req.params.id;
+            const ratings = yield userService.getUserRatings(userId);
+            if (!ratings) {
+                res.status(404).json({ message: "User not found or no ratings available" });
+                return;
+            }
+            res.status(200).json(ratings);
+        }
+        catch (error) {
+            res.status(500).json({ message: "Error retrieving ratings", error });
+        }
+    });
+}
+/**
+ * @swagger
+ * /api/users/{id}/ratings:
+ *   post:
+ *     summary: Add a rating to a user
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               ratingId:
+ *                 type: string
+ *                 description: The ID of the rating to add
+ *     responses:
+ *       200:
+ *         description: Rating added to user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: User or rating not found
+ *       500:
+ *         description: Internal server error
+ */
+function addRatingToUser(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const userId = req.params.id;
+            const { ratingId } = req.body;
+            if (!ratingId) {
+                res.status(400).json({ message: "Rating ID is required" });
+                return;
+            }
+            const updatedUser = yield userService.addRatingToUser(userId, ratingId);
+            if (!updatedUser) {
+                res.status(404).json({ message: "User not found" });
+                return;
+            }
+            res.status(200).json(updatedUser);
+        }
+        catch (error) {
+            res.status(500).json({ message: "Error adding rating to user", error });
+        }
+    });
+}
+/**
+ * @swagger
+ * /api/users/{id}/ratings:
+ *   delete:
+ *     summary: Remove a rating from a user
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               ratingId:
+ *                 type: string
+ *                 description: The ID of the rating to remove
+ *     responses:
+ *       200:
+ *         description: Rating removed from user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: User or rating not found
+ *       500:
+ *         description: Internal server error
+ */
+function removeRatingFromUser(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const userId = req.params.id;
+            const { ratingId } = req.body;
+            if (!ratingId) {
+                res.status(400).json({ message: "Rating ID is required" });
+                return;
+            }
+            const updatedUser = yield userService.removeRatingFromUser(userId, ratingId);
+            if (!updatedUser) {
+                res.status(404).json({ message: "User not found" });
+                return;
+            }
+            res.status(200).json(updatedUser);
+        }
+        catch (error) {
+            res.status(500).json({ message: "Error removing rating from user", error });
         }
     });
 }

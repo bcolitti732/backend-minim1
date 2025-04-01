@@ -27,11 +27,11 @@ export class UserService {
     }
 
     async getUserById(id: string): Promise<IUser | null> {
-        return await UserModel.findOne({ _id: id, available: true });
+        return await UserModel.findOne({ _id: id, available: true }).populate("ratings");
     }
 
     async getUserByName(name: string): Promise<IUser | null> {
-        return await UserModel.findOne({ name, available: true });
+        return await UserModel.findOne({ name, available: true }).populate("ratings");
     }
 
     async updateUserById(id: string, user: Partial<IUser>): Promise<IUser | null> {
@@ -68,7 +68,26 @@ export class UserService {
         return user;
     }
 
+    async addRatingToUser(userId: string, ratingId: string): Promise<IUser | null> {
+        return await UserModel.findByIdAndUpdate(
+            userId,
+            { $push: { ratings: ratingId } },
+            { new: true }
+        ).populate("ratings");
+    }
 
+    async removeRatingFromUser(userId: string, ratingId: string): Promise<IUser | null> {
+        return await UserModel.findByIdAndUpdate(
+            userId,
+            { $pull: { ratings: ratingId } },
+            { new: true }
+        ).populate("ratings");
+    }
+
+    async getUserRatings(userId: string): Promise<IUser["ratings"] | null> {
+        const user = await UserModel.findById(userId).populate("ratings");
+        return user ? user.ratings : null;
+    }
 }
 
 export default new UserService();

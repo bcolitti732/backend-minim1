@@ -5,7 +5,7 @@ const mongoose_1 = require("mongoose");
 const userSchema = new mongoose_1.Schema({
     name: {
         type: String,
-        required: true
+        required: true,
     },
     email: {
         type: String,
@@ -14,22 +14,23 @@ const userSchema = new mongoose_1.Schema({
             validator: function (value) {
                 return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
             },
-            message: (props) => `${props.value} is not a valid email!`
-        }
+            message: (props) => `${props.value} is not a valid email!`,
+        },
     },
     password: {
         type: String,
-        required: true
+        required: true,
     },
     phone: {
         type: String,
-        required: true
+        required: true,
     },
     available: {
         type: Boolean,
         required: true,
-        default: true
+        default: true,
     },
     packets: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Packet" }],
+    ratings: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Rating" }], // Relación con las valoraciones
 });
 exports.UserModel = (0, mongoose_1.model)("User", userSchema);

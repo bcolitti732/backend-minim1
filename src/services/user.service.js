@@ -33,12 +33,12 @@ class UserService {
     }
     getUserById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield user_1.UserModel.findOne({ _id: id, available: true });
+            return yield user_1.UserModel.findOne({ _id: id, available: true }).populate("ratings");
         });
     }
     getUserByName(name) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield user_1.UserModel.findOne({ name, available: true });
+            return yield user_1.UserModel.findOne({ name, available: true }).populate("ratings");
         });
     }
     updateUserById(id, user) {
@@ -72,6 +72,22 @@ class UserService {
                 return yield user_1.UserModel.findByIdAndUpdate(user._id, { $push: { packets: packetId } }, { new: true, runValidators: false });
             }
             return user;
+        });
+    }
+    addRatingToUser(userId, ratingId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield user_1.UserModel.findByIdAndUpdate(userId, { $push: { ratings: ratingId } }, { new: true }).populate("ratings");
+        });
+    }
+    removeRatingFromUser(userId, ratingId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield user_1.UserModel.findByIdAndUpdate(userId, { $pull: { ratings: ratingId } }, { new: true }).populate("ratings");
+        });
+    }
+    getUserRatings(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield user_1.UserModel.findById(userId).populate("ratings");
+            return user ? user.ratings : null;
         });
     }
 }

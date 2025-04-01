@@ -11,17 +11,28 @@ import {
     deactivateUserById, 
     getUserPackets, 
     addPacketToUser, 
-    getUserByName
+    getUserByName,
+    addRatingToUser,
+    removeRatingFromUser,
+    getUserRatings
 } from '../controllers/user.controller';
 
-router.get("/", getAllUsers);
-router.post("/", postUser);
-router.get('/:id', getUserById);
-router.get('/name/:name', getUserByName);
-router.put('/:id', updateUserById);
-router.delete('/:id', deleteUserById);
-router.put('/:id/deactivate', deactivateUserById);
-router.get('/:id/packets', getUserPackets);
-router.post('/:name/packets', addPacketToUser);
+// Rutas de usuarios
+router.get("/", getAllUsers); // Obtener todos los usuarios (paginados)
+router.post("/", postUser); // Crear un nuevo usuario
+router.get('/:id', getUserById); // Obtener un usuario por ID
+router.get('/name/:name', getUserByName); // Obtener un usuario por nombre
+router.put('/:id', updateUserById); // Actualizar un usuario por ID
+router.delete('/:id', deleteUserById); // Eliminar un usuario por ID
+router.put('/:id/deactivate', deactivateUserById); // Desactivar un usuario por ID
+
+// Rutas relacionadas con paquetes
+router.get('/:id/packets', getUserPackets); // Obtener los paquetes de un usuario
+router.post('/:name/packets', addPacketToUser); // Agregar un paquete a un usuario
+
+// Rutas relacionadas con valoraciones (ratings)
+router.post('/:id/ratings', addRatingToUser); // Agregar una valoración a un usuario
+router.delete('/:id/ratings', removeRatingFromUser); // Eliminar una valoración de un usuario
+router.get('/:id/ratings', getUserRatings); // Obtener todas las valoraciones de un usuario
 
 export default router;
