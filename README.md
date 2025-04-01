@@ -1,3 +1,6 @@
+# comentaris minim
+Esta tot implementat aqui. tot el crud i el buscador, només m'ha faltat implementar-ho a la UI de frontend
+
 # EA-Node
 
 ## Instalar dependencias
